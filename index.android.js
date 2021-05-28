@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("@nativescript/core/utils/utils");
+var utils = require("tns-core-modules/utils/utils");
 var ClusterManager = com.google.maps.android.clustering.ClusterManager;
 var DefaultClusterRenderer = com.google.maps.android.clustering.view.DefaultClusterRenderer;
 var HeatmapTileProvider = com.google.maps.android.heatmaps.HeatmapTileProvider;
@@ -13,20 +13,20 @@ var heatmaps = {
 }
 var Image = require('@nativescript/core/ui/image');
 
-function moveCamera(latitude, longitude) {
-    if (_mapView.gMap === undefined) {
-        console.log("NO INIT MAPVIEW")
-    } else {
-        try {
-            var cameraUpdate = new com.google.android.gms.maps.CameraUpdateFactory.newLatLng(new com.google.android.gms.maps.model.LatLng(latitude, longitude))
-            _mapView.gMap.animateCamera(cameraUpdate)
-        } catch (e) {
-            console.log(e)
-        }
-    }
+// function moveCamera(latitude, longitude) {
+//     if (_mapView.gMap === undefined) {
+//         console.log("NO INIT MAPVIEW")
+//     } else {
+//         try {
+//             var cameraUpdate = new com.google.android.gms.maps.CameraUpdateFactory.newLatLng(new com.google.android.gms.maps.model.LatLng(latitude, longitude))
+//             _mapView.gMap.animateCamera(cameraUpdate)
+//         } catch (e) {
+//             console.log(e)
+//         }
+//     }
 
-}
-exports.moveCamera = moveCamera;
+// }
+// exports.moveCamera = moveCamera;
 
 /***************************************** CLUSTERING *****************************************/
 
@@ -48,74 +48,127 @@ const CustomClusterItem = java.lang.Object.extend({
     },
 });
 
-function setupMarkerCluster(mapView, markers) {
-    console.log(mapView, markers.length)
+function setupMarkerCluster(mapView) {
     _mapView = mapView
     const CustomClusterRenderer = DefaultClusterRenderer.extend({
         init: function () { },
         onBeforeClusterItemRendered: function (item, markerOptions) {
             this.super.onBeforeClusterItemRendered(item, markerOptions);
-            var mIcon = Image;
-            mIcon.imageSource = item.marker.icon.imageSource;
-            var androidIcon = com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap(mIcon.imageSource.android);
-            markerOptions.icon(androidIcon);
+            //set marker icon as cluster item icon
+            markerOptions.icon(com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap(item.marker.icon.imageSource.android))
+            console.log('[PoiRenderer] onBeforeClusterItemRendered')
+        },
+        onBeforeClusterRendered: function(clusterManager, markerOptions){
+            this.super.onBeforeClusterRendered(clusterManager, markerOptions);
+            console.log('[PoiRenderer] onBeforeClusterRendered');
+        },    
+        onClusterItemRendered: function(item, marker) {
+            this.super.onClusterItemRendered(item, marker);
+            console.log('[PoiRenderer] onClusterItemRendered');
+        },    
+        onClusterRendered: function(cluster, marker) {
+            console.log('[PoiRenderer] onClusterRendered');
+            this.super.onClusterRendered(cluster, marker);
+        },    
+        onClusterItemUpdated: function(item, marker) {       
+            this.super.onClusterItemUpdated(item, marker);
+            //set marker icon as cluster item icon
+            marker.setIcon(com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap(item.marker.icon.imageSource.android))
+            console.log('[PoiRenderer] onClusterItemUpdated');
+        },    
+        onClusterUpdated: function(cluster, marker) {		
+            this.super.onClusterUpdated(cluster, marker);
+            console.log('[PoiRenderer] onClusterUpdated');
         }
     });
     var clusterManager = new ClusterManager(utils.ad.getApplicationContext(), _mapView.gMap);
     var renderer = new CustomClusterRenderer(utils.ad.getApplicationContext(), _mapView.gMap, clusterManager);
     clusterManager.mapView = _mapView;
-    if (_mapView.gMap.setOnCameraIdleListener) {
-        _mapView.gMap.setOnCameraIdleListener(clusterManager);
-    }
-    else if (_mapView.gMap.setOnCameraChangeListener) {
-        _mapView.gMap.setOnCameraChangeListener(clusterManager);
-    }
+    // if (_mapView.gMap.setOnCameraIdleListener) {
+    //     _mapView.gMap.setOnCameraIdleListener(clusterManager);
+    // }
+    // else if (_mapView.gMap.setOnCameraChangeListener) {
+    //     _mapView.gMap.setOnCameraChangeListener(clusterManager);
+    // }
     clusterManager.setRenderer(renderer);
     _mapView.gMap.setOnInfoWindowClickListener(clusterManager);
-    _mapView.gMap.setOnMarkerClickListener(clusterManager);
+    // _mapView.gMap.setOnMarkerClickListener(clusterManager);
 
     clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener({
         onClusterItemClick: function (gmsMarker) {
-            var marker = markers.find(mk => mk.android.getPosition() === gmsMarker.getPosition());
-            marker && _mapView.notifyMarkerTapped(marker);
+            //returns tapped marker
+            _mapView.notifyMarkerTapped(gmsMarker.getMarker());
             return false;
         }
     }));
 
-    clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener({
-        onClusterItemInfoWindowClick: function (gmsMarker) {
-            var marker = markers.find(mk => mk.android.getPosition() === gmsMarker.getPosition());
-            marker && _mapView.notifyMarkerTapped(marker);
-            return false;
-        }
-    }));
+    // clusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener({
+    //     onClusterItemInfoWindowClick: function (gmsMarker) {
+    //         var marker = markers.find(mk => mk.android.getPosition() === gmsMarker.getPosition());
+    //         marker && _mapView.notifyMarkerTapped(marker);
+    //         return false;
+    //     }
+    // }));
 
     clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener({
+        //return the array of the markers in the cluster
         onClusterClick: function (cluster) {
             var listeMarker = cluster.getItems().toArray();
             var resultListeMarkers = [];
             for (var i = 0; i < listeMarker.length; i++) {
-                resultListeMarkers.push(markers.find(mk => mk.android.getPosition() === listeMarker[i].getPosition()))
-                if (i === listeMarker.length - 1) {
-                    _mapView.notifyMarkerTapped(resultListeMarkers);
-                    return false;
-                }
+                resultListeMarkers.push(listeMarker[i].getMarker())
             }
+            _mapView.notifyMarkerTapped(resultListeMarkers);
+            return false;
         }
+        
+        // onClusterClick: function (cluster) {
+        //     var listeMarker = cluster.getItems().toArray();
+        //     var resultListeMarkers = [];
+        //     for (var i = 0; i < listeMarker.length; i++) {
+                    //Perché fa questa cosa e non prende direttamente il marker?
+        //         resultListeMarkers.push(markers.find(mk => mk.android.getPosition() === listeMarker[i].getPosition()))
+                    //Perché non lo mette dopo il for?
+        //         if (i === listeMarker.length - 1) {
+        //             _mapView.notifyMarkerTapped(resultListeMarkers);
+        //             return false;
+        //         }
+        //     }
+        // }
     }));
+    return clusterManager;
+}
+exports.setupMarkerCluster = setupMarkerCluster;
+
+//listener(marker)
+// function setItemClickListener(clusterManager, listener) {
+//     _mapView.gMap.setOnMarkerClickListener(clusterManager);
+//     clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener({        
+//         onClusterItemClick: function(marker) {
+//             console.log("SCHIANTA?")
+//             listener(marker);
+//         }
+//     }));   
+// }
+// exports.setItemClickListener = setItemClickListener;
+
+
+function addItems(clusterManager, markers) {
 
     var arrayMarker = new java.util.ArrayList()
     for (var i = 0; i < markers.length; i++) {
         var markerItem = new CustomClusterItem();
         markerItem.marker = markers[i];
         arrayMarker.add(markerItem)
-        if (i === markers.length - 1) {
-            clusterManager.addItems(arrayMarker)
-        }
     }
+    clusterManager.clearItems();
+    clusterManager.addItems(arrayMarker)
     clusterManager.cluster();
 }
-exports.setupMarkerCluster = setupMarkerCluster;
+exports.addItems = addItems;
+
+
+
 
 function clearMap() {
     _mapView.gMap.clear()
