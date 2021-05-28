@@ -1,4 +1,4 @@
-import { Color } from "tns-core-modules/color";
+import { Color } from "@nativescript/core/color";
 
 declare module "nativescript-danem-google-maps-utils" {
 
