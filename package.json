@@ -1,6 +1,6 @@
 {
-  "name": "nativescript-danem-google-maps-utils",
-  "version": "1.0.18",
+  "name": "nativescript-google-maps-utils",
+  "version": "0.0.1",
   "description": "A NativeScript Goole maps utils for IOS & Android.",
   "main": "index",
   "typings": "index.d.ts",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/j20mc/Nativescript-Danem-Google-Maps-Utils"
+    "url": "https://github.com/phoops/nativescript-google-maps-utils.git"
   },
   "scripts": {
     "tslint": "tslint --project tsconfig.json",
@@ -35,7 +35,7 @@
     "Cluster",
     "Clustering"
   ],
-  "author": "Jean-Marc Chemama <j.chemama.danem@gmail.com>",
+  "author": "Emiliano Biscardi <emiliano.biscardi@phoops.it>",
   "contributors": [
     "Nader Toukabri (https://github.com/naderio)"
   ],

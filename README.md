@@ -1,3 +1,15 @@
+
+nativescript-google-maps-utils
+==============================
+
+We are trying to carry on the work done here:
+https://github.com/j20mc/Nativescript-Danem-Google-Maps-Utils
+
+
+Work in progress...
+
+<!-- nativescript-danem-google-maps-utils (V1.0.17)
+
 nativescript-danem-google-maps-utils (V1.0.17)
 ==================================
 
@@ -115,3 +127,4 @@ demoSetupHeatMap() {
 ```
 
 Plugin inspired by nativescript-google-maps-utils, thanks @naderio
+-->
