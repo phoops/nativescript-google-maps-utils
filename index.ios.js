@@ -83,13 +83,16 @@ var GMUClusterRendererDelegateImpl = (function (_super) {
      * item marker.
      */
     GMUClusterRendererDelegateImpl.prototype.rendererWillRenderMarker = function (renderer, marker) {
+        console.log("Marker is about to be added")
         var owner = this._owner.get();
         if (marker.userData instanceof POIItem) {
+            console.log("Hey, it's a marker!")
             var mIcon = Image;
             mIcon.imageSource = imageSourceModule.fromResource(marker.userData.imageUrl);
             marker.icon = mIcon.imageSource.ios;
             //marker.title = "test"
         } else {
+            console.log("This is a cluster!")
             // cluster marker
         }
     };
@@ -99,11 +102,11 @@ var GMUClusterRendererDelegateImpl = (function (_super) {
 
 }(NSObject));
 
-function moveCamera(latitude, longitude, zoom) {
-    let cameraUpdate = GMSCameraPosition.alloc().initWithLatitudeLongitudeZoom(latitude, longitude, zoom)
-    _mapView.nativeView.animateToCameraPosition(cameraUpdate)
-}
-exports.moveCamera = moveCamera;
+// function moveCamera(latitude, longitude, zoom) {
+//     let cameraUpdate = GMSCameraPosition.alloc().initWithLatitudeLongitudeZoom(latitude, longitude, zoom)
+//     _mapView.nativeView.animateToCameraPosition(cameraUpdate)
+// }
+// exports.moveCamera = moveCamera;
 
 function clearMap() {
     _mapView.gMap.clear();
@@ -131,17 +134,21 @@ function setupMarkerCluster(mapView, markers) {
     console.log("GMUDefaultClusterRenderer : ", renderer instanceof GMUDefaultClusterRenderer, renderer); // true
     console.log("GMUClusterManager : ", clusterManager instanceof GMUClusterManager, clusterManager); // true
 
-    for (var i = 0; i < markers.length; i++) {
-        var clusterItem = POIItem.alloc().initWithPositionNameImageUrlTitle(markers[i].position.ios, markers[i].userData, markers[i].infoWindowTemplate, markers[i].title)
-        clusterManager.addItem(clusterItem)
-        if (i === markers.length - 1) {
-            clusterManager.cluster();
-        }
-    }
+    return clusterManager;
 
 }
 exports.setupMarkerCluster = setupMarkerCluster;
 
+
+function addItems(clusterManager, markers) {
+
+    for (var i = 0; i < markers.length; i++) {
+        var clusterItem = POIItem.alloc().initWithPositionNameImageUrlTitle(markers[i].position.ios, markers[i].userData, markers[i].infoWindowTemplate, markers[i].title)
+        clusterManager.addItem(clusterItem)
+    }
+    clusterManager.cluster();
+}
+exports.addItems = addItems;
 /***************************************** HEATMAP *****************************************/
 
 function setupHeatmap(mapView, positions, colors, startPoints) {
