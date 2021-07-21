@@ -60,11 +60,12 @@ function setupMarkerCluster(mapView) {
         },
         onBeforeClusterRendered: function(clusterManager, markerOptions){
             this.super.onBeforeClusterRendered(clusterManager, markerOptions);
+            // markerOptions.icon(com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap(item.marker.icon.imageSource.android))
             console.log('[PoiRenderer] onBeforeClusterRendered');
         },    
         onClusterItemRendered: function(item, marker) {
             this.super.onClusterItemRendered(item, marker);
-            console.log('[PoiRenderer] onClusterItemRendered');
+            console.log('*****[PoiRenderer] onClusterItemRendered');
         },    
         onClusterRendered: function(cluster, marker) {
             console.log('[PoiRenderer] onClusterRendered');
@@ -97,7 +98,7 @@ function setupMarkerCluster(mapView) {
     clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener({
         onClusterItemClick: function (gmsMarker) {
             //returns tapped marker
-            _mapView.notifyMarkerTapped(gmsMarker.getMarker());
+            _mapView.notifyMarkerTapped(gmsMarker);
             return false;
         }
     }));
@@ -114,11 +115,11 @@ function setupMarkerCluster(mapView) {
         //return the array of the markers in the cluster
         onClusterClick: function (cluster) {
             var listeMarker = cluster.getItems().toArray();
-            var resultListeMarkers = [];
-            for (var i = 0; i < listeMarker.length; i++) {
-                resultListeMarkers.push(listeMarker[i].getMarker())
-            }
-            _mapView.notifyMarkerTapped(resultListeMarkers);
+            // var resultListeMarkers = [];
+            // for (var i = 0; i < listeMarker.length; i++) {
+            //     resultListeMarkers.push(listeMarker[i].getMarker())
+            // }
+            _mapView.notifyMarkerTapped(listeMarker);
             return false;
         }
         
@@ -152,9 +153,17 @@ exports.setupMarkerCluster = setupMarkerCluster;
 // }
 // exports.setItemClickListener = setItemClickListener;
 
+function updateItem(clusterManager, marker) {
+    clusterManager.updateItem(marker);
+}
+exports.updateItem = updateItem;
+
+function cluster(clusterManager) {
+    clusterManager.cluster();
+}
+exports.cluster = cluster;
 
 function addItems(clusterManager, markers) {
-
     var arrayMarker = new java.util.ArrayList()
     for (var i = 0; i < markers.length; i++) {
         var markerItem = new CustomClusterItem();
@@ -167,11 +176,15 @@ function addItems(clusterManager, markers) {
 }
 exports.addItems = addItems;
 
-
-
+function addItem(clusterManager, marker) {
+    var markerItem = new CustomClusterItem();
+    markerItem.marker = marker;            
+    clusterManager.addItem(markerItem)    
+}
+exports.addItem = addItem;
 
 function clearMap() {
-    _mapView.gMap.clear()
+    clusterManager.clearMap();
 }
 exports.clearMap = clearMap;
 
