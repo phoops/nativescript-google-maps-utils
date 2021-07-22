@@ -6,6 +6,8 @@ var DefaultClusterRenderer = com.google.maps.android.clustering.view.DefaultClus
 var HeatmapTileProvider = com.google.maps.android.heatmaps.HeatmapTileProvider;
 var TileOverlayOptions = com.google.android.gms.maps.model.TileOverlayOptions;
 var Gradient = com.google.maps.android.heatmaps.Gradient;
+var LatLng = com.google.android.gms.maps.model.LatLng;
+var LatLngBounds = com.google.android.gms.maps.model.LatLngBounds
 var _mapView = {};
 var heatmaps = {
     provider: "",
@@ -115,10 +117,29 @@ function setupMarkerCluster(mapView) {
         //return the array of the markers in the cluster
         onClusterClick: function (cluster) {
             var listeMarker = cluster.getItems().toArray();
-            // var resultListeMarkers = [];
-            // for (var i = 0; i < listeMarker.length; i++) {
-            //     resultListeMarkers.push(listeMarker[i].getMarker())
-            // }
+            var map = _mapView.gMap;
+            var minLat;
+            var minLon;
+            var maxLat;
+            var maxLon;
+            for (var i = 0; i < listeMarker.length; i++) {
+                var marker = listeMarker[i];
+                var p = marker.getPosition();
+                if (!minLat || p.latitude < minLat)
+                    minLat = p.latitude;
+                if (!minLon || p.longitude < minLon)
+                    minLon = p.longitude;
+                if (!maxLat || p.latitude > maxLat)
+                    maxLat = p.latitude;
+                if (!maxLon || p.longitude > maxLon)
+                    maxLon = p.longitude;
+            }
+            var bounds = new LatLngBounds(
+                new LatLng(minLat, minLon),
+                new LatLng(maxLat, maxLon)
+            );
+            var cu = new com.google.android.gms.maps.CameraUpdateFactory.newLatLngBounds(bounds, 100);
+            map.moveCamera(cu);
             _mapView.notifyMarkerTapped(listeMarker);
             return false;
         }
