@@ -50,7 +50,7 @@ const CustomClusterItem = java.lang.Object.extend({
     },
 });
 
-function setupMarkerCluster(mapView) {
+function setupMarkerCluster(mapView,countItems) {
     _mapView = mapView
     const CustomClusterRenderer = DefaultClusterRenderer.extend({
         init: function () { },
@@ -82,6 +82,18 @@ function setupMarkerCluster(mapView) {
         onClusterUpdated: function(cluster, marker) {		
             this.super.onClusterUpdated(cluster, marker);
             console.log('[PoiRenderer] onClusterUpdated');
+        },
+        getClusterText: function(bucket){
+            if (countItems){
+                return bucket+"";
+            }
+            return this.super.getClusterText(bucket);
+        },
+        getBucket: function(cluster){
+            if (countItems){
+                return cluster.getSize();
+            }
+            return this.super.getBucket(cluster);
         }
     });
     var clusterManager = new ClusterManager(utils.ad.getApplicationContext(), _mapView.gMap);
