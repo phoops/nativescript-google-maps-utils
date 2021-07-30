@@ -114,7 +114,7 @@ function clearMap() {
 }
 exports.clearMap = clearMap;
 
-function setupMarkerCluster(mapView, markers) {
+function setupMarkerCluster(mapView,countItems,disabledClustering) {
     _mapView = mapView;
     console.log("*** init ios map view: ");
     var iconGenerator = GMUDefaultClusterIconGenerator.alloc().init();

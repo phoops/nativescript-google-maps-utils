@@ -2,12 +2,12 @@ import { Color } from "@nativescript/core/color";
 
 declare module "nativescript-danem-google-maps-utils" {
 
-  import { MapView, Position, Marker } from "nativescript-google-maps-sdk";
+  import { MapView, Position } from "nativescript-google-maps-sdk";
 
   export function enableDebug(debugFn?: ((...args: Array<any>) => any)): void;
   export function disableDebug(): void;
 
-  export function setupMarkerCluster(mapView: MapView, markers: Array<Marker>): void;
+  export function setupMarkerCluster(mapView: MapView, countItems? : boolean,disabledClustering? : boolean): void;
 
   export function moveCamera(latitude, longitude, zoom): void;
 
@@ -25,5 +25,4 @@ declare module "nativescript-danem-google-maps-utils" {
   export function setRadius() : void;
 
   export function setOpacity() : void;
-
 }

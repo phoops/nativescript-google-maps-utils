@@ -14,7 +14,6 @@ var heatmaps = {
     overlay: "",
 }
 var Image = require('@nativescript/core/ui/image');
-
 // function moveCamera(latitude, longitude) {
 //     if (_mapView.gMap === undefined) {
 //         console.log("NO INIT MAPVIEW")
@@ -50,7 +49,7 @@ const CustomClusterItem = java.lang.Object.extend({
     },
 });
 
-function setupMarkerCluster(mapView,countItems) {
+function setupMarkerCluster(mapView,countItems,disabledClustering) {
     _mapView = mapView
     const CustomClusterRenderer = DefaultClusterRenderer.extend({
         init: function () { },
@@ -94,6 +93,9 @@ function setupMarkerCluster(mapView,countItems) {
                 return cluster.getSize();
             }
             return this.super.getBucket(cluster);
+        },
+        shouldRenderAsCluster: function(cluster) {
+            return this.super.shouldRenderAsCluster(cluster) && !disabledClustering;
         }
     });
     var clusterManager = new ClusterManager(utils.ad.getApplicationContext(), _mapView.gMap);
@@ -201,10 +203,10 @@ function addItems(clusterManager, markers) {
     for (var i = 0; i < markers.length; i++) {
         var markerItem = new CustomClusterItem();
         markerItem.marker = markers[i];
-        arrayMarker.add(markerItem)
+        arrayMarker.add(markerItem);
     }
     clusterManager.clearItems();
-    clusterManager.addItems(arrayMarker)
+    clusterManager.addItems(arrayMarker);
     clusterManager.cluster();
 }
 exports.addItems = addItems;
