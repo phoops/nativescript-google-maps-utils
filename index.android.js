@@ -132,28 +132,18 @@ function setupMarkerCluster(mapView,countItems,disabledClustering) {
         onClusterClick: function (cluster) {
             var listeMarker = cluster.getItems().toArray();
             var map = _mapView.gMap;
-            var minLat;
-            var minLon;
-            var maxLat;
-            var maxLon;
+            var builder = LatLngBounds.builder();
             for (var i = 0; i < listeMarker.length; i++) {
                 var marker = listeMarker[i];
                 var p = marker.getPosition();
-                if (!minLat || p.latitude < minLat)
-                    minLat = p.latitude;
-                if (!minLon || p.longitude < minLon)
-                    minLon = p.longitude;
-                if (!maxLat || p.latitude > maxLat)
-                    maxLat = p.latitude;
-                if (!maxLon || p.longitude > maxLon)
-                    maxLon = p.longitude;
+                builder.include(p);
             }
-            var bounds = new LatLngBounds(
-                new LatLng(minLat, minLon),
-                new LatLng(maxLat, maxLon)
-            );
-            var cu = new com.google.android.gms.maps.CameraUpdateFactory.newLatLngBounds(bounds, 100);
-            map.moveCamera(cu);
+            var bounds = builder.build();
+            //Necessary timeout, otherwise map is not well centered
+            setTimeout(() => {
+                var cu = new com.google.android.gms.maps.CameraUpdateFactory.newLatLngBounds(bounds,5);
+                map.moveCamera(cu);
+            }, 1);
             _mapView.notifyMarkerTapped(listeMarker);
             return false;
         }
