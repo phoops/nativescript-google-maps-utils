@@ -213,6 +213,11 @@ function clearMap() {
 }
 exports.clearMap = clearMap;
 
+function setMinClusterSize(clusterManager, size){
+    clusterManager.getRenderer().setMinClusterSize(size);
+}
+exports.setMinClusterSize = setMinClusterSize;
+
 /***************************************** HEATMAP *****************************************/
 
 function setupHeatmap(mapView, positions, colors, startPoints) {
