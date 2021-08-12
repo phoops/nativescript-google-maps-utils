@@ -57,30 +57,24 @@ function setupMarkerCluster(mapView,countItems,disabledClustering) {
             this.super.onBeforeClusterItemRendered(item, markerOptions);
             //set marker icon as cluster item icon
             markerOptions.icon(com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap(item.marker.icon.imageSource.android))
-            console.log('[PoiRenderer] onBeforeClusterItemRendered')
         },
         onBeforeClusterRendered: function(clusterManager, markerOptions){
             this.super.onBeforeClusterRendered(clusterManager, markerOptions);
             // markerOptions.icon(com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap(item.marker.icon.imageSource.android))
-            console.log('[PoiRenderer] onBeforeClusterRendered');
         },    
         onClusterItemRendered: function(item, marker) {
             this.super.onClusterItemRendered(item, marker);
-            console.log('*****[PoiRenderer] onClusterItemRendered');
         },    
         onClusterRendered: function(cluster, marker) {
-            console.log('[PoiRenderer] onClusterRendered');
             this.super.onClusterRendered(cluster, marker);
         },    
         onClusterItemUpdated: function(item, marker) {       
             this.super.onClusterItemUpdated(item, marker);
             //set marker icon as cluster item icon
             marker.setIcon(com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap(item.marker.icon.imageSource.android))
-            console.log('[PoiRenderer] onClusterItemUpdated');
         },    
         onClusterUpdated: function(cluster, marker) {		
             this.super.onClusterUpdated(cluster, marker);
-            console.log('[PoiRenderer] onClusterUpdated');
         },
         getClusterText: function(bucket){
             if (countItems){
