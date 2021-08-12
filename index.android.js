@@ -208,8 +208,14 @@ function addItem(clusterManager, marker) {
 }
 exports.addItem = addItem;
 
-function clearMap() {
-    clusterManager.clearMap();
+function removeItem(clusterManager, marker) {
+    clusterManager.removeItem(marker);
+}
+exports.removeItem = removeItem;
+
+function clearMap(clusterManager) {
+    clusterManager.clearItems();
+    clusterManager.cluster();
 }
 exports.clearMap = clearMap;
 
